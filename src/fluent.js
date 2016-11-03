@@ -31,11 +31,11 @@ class FluentBuilder<T: Object, B: $Subtype<{[_: $Keys<T>]: any}>> {
      * @param {FluentBuilder<T,B>} obj Full object or a FluentBuilder of the same type
      * @param {Shape<T>} [newObj] Properties to replace on obj
      */
-    constructor(obj?: T | FluentBuilder<T, B>, newObj?: $Shape<B>) {
+    constructor(obj?: $Shape<B> | FluentBuilder<T, B>, newObj?: $Shape<B>) {
         if (obj instanceof FluentBuilder) {
             this.obj = { ...this.constructor.initialObj, ...obj.valueOf(), ...newObj };
         } else {
-            this.obj = { ...this.constructor.initialObj };
+            this.obj = { ...this.constructor.initialObj, B };
         }
     }
 
@@ -43,7 +43,7 @@ class FluentBuilder<T: Object, B: $Subtype<{[_: $Keys<T>]: any}>> {
         const out = {};
 
         for (let k of Object.keys(this.obj)) {
-            if (typeof k !== 'function') {
+            if (typeof this.obj[k] !== 'function') {
                 if (this.obj[k] instanceof FluentBuilder) {
                     out[k] = this.obj[k].valueOf()
                 } else {
